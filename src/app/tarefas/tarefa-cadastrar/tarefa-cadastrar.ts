@@ -9,6 +9,9 @@ import { TarefaModel } from '../../models/tarefa.model';
   styleUrl: './tarefa-cadastrar.scss',
 })
 export class TarefaCadastrar {
+  private readonly tarefaService = inject(TarefaService);
+  private readonly router = inject(Router);
+
   tarefa = signal<TarefaModel>({
     id: crypto.randomUUID(),
     descricao: "",
@@ -17,23 +20,15 @@ export class TarefaCadastrar {
   })
 
   salvar(): void {
-    const tarefas = this.carregarTarefasDoLocalStorage();
-
-    tarefas.push(this.tarefa());
-
-    const tarefaString = JSON.stringify(tarefas);
-    localStorage.setItem("tarefas", tarefaString)
-
-    alert("Tarefa cadastrada com sucesso");
-  }
-
-  carregarTarefasDoLocalStorage(): TarefaModel[] {
-    const tarefasString = localStorage.getItem("tarefas");
-
-    if (tarefasString === null) {
-      return [];
-    }
-
-    return JSON.parse(tarefasString) as TarefaModel[];
+    this.tarefaService.cadastrar(this.tarefa()).subscribe({
+      next: () =>{
+        alert("Tarefa cadastrada com sucesso");
+        this.router.navigate(["/tarefas"]);
+      },
+      error: erro => {
+        console.error("erro ao cadastrar tarefa: " + erro);
+        alert("Ocorreu um erro ao cadastrar tarefa");
+      }
+    })
   }
 }
