@@ -1,6 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TarefaModel } from '../../models/tarefa.model';
+import { Router } from '@angular/router';
+import { TarefaService } from '../../services/tarefas.service';
 
 @Component({
   selector: 'app-tarefa-cadastrar',
@@ -21,7 +23,7 @@ export class TarefaCadastrar {
 
   salvar(): void {
     this.tarefaService.cadastrar(this.tarefa()).subscribe({
-      next: () =>{
+      next: () => {
         alert("Tarefa cadastrada com sucesso");
         this.router.navigate(["/tarefas"]);
       },

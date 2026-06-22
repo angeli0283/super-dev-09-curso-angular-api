@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TarefaModel } from '../../models/tarefa.model';
-import { TarefasService } from '../../services/tarefas.service';
+import { TarefaService } from '../../services/tarefas.service';
 
 @Component({
   selector: 'app-tarefa-listar',
@@ -10,7 +10,7 @@ import { TarefasService } from '../../services/tarefas.service';
   styleUrl: './tarefa-listar.scss',
 })
 export class TarefaListar {
-  private readonly tarefaService = inject(TarefasService);
+  private readonly tarefaService = inject(TarefaService);
 
   tarefas = signal<TarefaModel[]>([]);
 
@@ -46,8 +46,15 @@ export class TarefaListar {
   }
 
   apagar(id: string): void {
-    this.tarefas.update(tarefas => tarefas.filter(x => x.id !== id))
-    const tarefasString = JSON.stringify(this.tarefas());
-    localStorage.setItem("tarefas", tarefasString);
+    this.tarefaService.apagar(id).subscribe({
+      next: () => {
+        alert("Tarefa apagada com sucesso");
+        this.carregarTarefas();
+      },
+      error: erro => {
+        console.error("Erro ao tentar apagar tarefa:", erro);
+        alert("Não foi possivel apagar sua tarefa");
+      }
+    })
   }
 }
